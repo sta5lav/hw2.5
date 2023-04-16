@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 
 @Service
 public class EmployeeService {
@@ -47,15 +48,15 @@ public class EmployeeService {
     }
 
 
-    static void getMinSalaryOfOtdel(Collection<Employee> employee, int departament) {
+    static void getMinSalaryOfOtdel(Collection<Employee> employee, String departament) {
         if (departament> 5) {
             System.out.println("Такого отдела не существует!");
             return;
         }
         int min = Integer.MAX_VALUE;
         String minSalaryOfOtdel = null;
-        employee.stream().forEachOrdered(employee -> employee.getSalary());
-
+        employee.stream().forEach(employee1 -> employee1.getSalary());
+        employee.stream(Comparator.comparingInt(employee -> employee.getSalary());
         }
         for (int i = 0; i < employee.; i++) {
             if (employee[i].getOtdel() == otdel && min > employee[i].getSalary()) {
