@@ -5,101 +5,47 @@ import lessons24.Collections.exceptions.EmployeeNotFoundException;
 import lessons24.Collections.exceptions.EmployeeStorageIsFullException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
+
 
 @Service
 public class EmployeeService {
-    private final int SIZE = 5;
-    private final Collection<Employee> employees = new ArrayList<>();
+    private final int SIZE = 7;
+    private final Map<String, Employee> employees = new HashMap<>();
 
-
-    public Employee addEmployee(String firstName, String lastName) {
-        if (employees.size() < SIZE) {
-            Employee employee = new Employee(firstName, lastName);
-            if (employees.contains(employee)) {
-                throw new EmployeeAlreadyAddedException("Сотрудник уже имеется в коллекции!");
-            }
-            employees.add(employee);
-            return employee;
-        }
-        throw new EmployeeStorageIsFullException("Коллекция заполнена, места нет!");
+    private String getKey(String firstName, String lastName) {
+        return firstName + "|" + lastName;
     }
 
+    public Employee addEmployee(String firstName, String lastName, int salary, int department) {
+            Employee employee = new Employee(firstName, lastName, salary, department);
+            String key = getKey(firstName, lastName);
+            if (employees.containsKey(key)) {
+                throw new EmployeeAlreadyAddedException("Сотрудник уже имеется в коллекции!");
+            }
+            if (employees.size() < SIZE) {
+                employees.put(key, employee);
+                return employee;
+            }
+            throw new EmployeeStorageIsFullException("Коллекция заполнена, места нет!");
+        }
+
     public Employee removeEmployee(String firstName, String lastName) {
-        Employee employee = new Employee(firstName, lastName);
-        if (!employees.contains(employee)) {
+        String key = getKey(firstName, lastName);
+        if (!employees.containsKey(key)) {
             throw new EmployeeNotFoundException("Сотрудник отсутствует в коллекции!");
-        } else employees.remove(employee);
-        return employee;
+        }
+        return employees.remove(key);
     }
 
     public Employee findEmployee(String firstName, String lastName) {
-        Employee employee = new Employee(firstName, lastName);
-        if (!employees.contains(employee)) {
+        String key = getKey(firstName, lastName);
+        if (!employees.containsKey(key)) {
             throw new EmployeeNotFoundException("Сотрудник отсутствует в коллекции!");
-        } else return employee;
+        } else return employees.get(key);
     }
 
-    public Collection<Employee> getEmployee() {
-        return employees;
-    }
-
-
-    static void getMinSalaryOfOtdel(Collection<Employee> employee, String departament) {
-        if (departament> 5) {
-            System.out.println("Такого отдела не существует!");
-            return;
-        }
-        int min = Integer.MAX_VALUE;
-        String minSalaryOfOtdel = null;
-        employee.stream().forEach(employee1 -> employee1.getSalary());
-        employee.stream(Comparator.comparingInt(employee -> employee.getSalary());
-        }
-        for (int i = 0; i < employee.; i++) {
-            if (employee[i].getOtdel() == otdel && min > employee[i].getSalary()) {
-                min = employee[i].getSalary();
-            }
-        }
-        for (Employee value : employee) {
-            if (min == value.getSalary()) {
-                minSalaryOfOtdel = value.getName() + " " + value.getMiddleName() + " " + value.getSurname();
-            }
-        }
-        System.out.println("Сотрудник отдела " + otdel + " с минимальной зарплатой: " + minSalaryOfOtdel + " (" + min + ") ");
-    }
-
-    static void getMaxSalaryOfOtdel(int departament) {
-        if (departament > 5) {
-            System.out.println("Такого отдела не существует!");
-            return;
-        }
-        int max = Integer.MIN_VALUE;
-        String minSalaryOfOtdel = null;
-        for (int i = 0; i < employee.length; i++) {
-            if (employee[i].getOtdel() == departament && max < employee[i].getSalary()) {
-                max = employee[i].getSalary();
-            }
-        }
-        for (Employee value : employee) {
-            if (max == value.getSalary()) {
-                minSalaryOfOtdel = value.getName() + " " + value.getMiddleName() + " " + value.getSurname();
-            }
-        }
-        System.out.println("Сотрудник отдела " + otdel + " с максимальной зарплатой: " + minSalaryOfOtdel + " (" + max + ") ");
-    }
-
-    static void getEmployeesListOfOtdel(Employee[] employee, int otdel) {
-        if (otdel > 5) {
-            System.out.println("Такого отдела не существует!");
-            return;
-        }
-        for (int i = 0; i < employee.length; i++) {
-            if (employee[i].getOtdel() == otdel) {
-                System.out.println("id = " + employee[i].getId() + ", сотрудник: " + employee[i].getName() + " " + employee[i].getMiddleName() + " " + employee[i].getSurname() + ", зарплата:" + employee[i].getSalary());
-            }
-        }
+    public List<Employee> getAll() {
+        return new ArrayList<>(employees.values());
     }
 }
