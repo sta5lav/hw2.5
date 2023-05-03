@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 @Service
 public class DepartmentService {
     public final EmployeeService employeeService;
@@ -19,7 +20,6 @@ public class DepartmentService {
                 .collect(Collectors.groupingBy(Employee::getDepartment));
     }
 
-
     public Employee getMinSalaryOfOtdel(int department) {
         return employeeService.getAll().stream()
                 .filter(employee -> employee.getDepartment() == department)
@@ -32,6 +32,12 @@ public class DepartmentService {
                 .filter(employee -> employee.getDepartment() == department)
                 .max(Comparator.comparingInt(Employee::getSalary))
                 .orElse(null);
+    }
+
+    public int getAllSalaryOfDepartment(int department) {
+        return employeeService.getAll().stream().filter(employee -> employee.getDepartment() == department)
+                .mapToInt(Employee::getSalary)
+                .sum();
     }
 
     public List<Employee> allEmployeesDepartment(int department) {
