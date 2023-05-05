@@ -1,68 +1,57 @@
 package lessons24.Collections;
 
+import lessons24.Collections.exceptions.EmployeeAlreadyAddedException;
 import lessons24.Collections.exceptions.EmployeeNotFoundException;
+import lessons24.Collections.exceptions.EmployeeStorageIsFullException;
+import lessons24.Collections.exceptions.IncorrectEnter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 
 @Service
 public class EmployeeService {
-    List<Employee> employees = new ArrayList<>(List.of(
-            new Employee("Ричард", "Гир"),
-            new Employee("Том", "Круз"),
-            new Employee("Пол", "Макартни"),
-            new Employee("Леонардо", "Дикаприо")));
+    private final int SIZE = 7;
+    private final Map<String, Employee> employees = new HashMap<>();
 
+    private String getKey(String firstName, String lastName) {
+        return firstName + "|" + lastName;
+    }
 
-    public String addEmployee(Employee employee) {
-        try {
-            checkAddEmployee(employee);
-        } catch (EmployeeNotFoundException e) {
-            return e.getMessage();
+    public Employee addEmployee(String firstName, String lastName, int salary, int department) {
+        if (!StringUtils.isAlpha(firstName) || !StringUtils.isAlpha(lastName)) {
+            throw new IncorrectEnter("Некорректный ввод!");
+        } else;
+        String key = getKey(firstName, lastName);
+        if (employees.containsKey(key)) {
+            throw new EmployeeAlreadyAddedException("Сотрудник уже имеется в коллекции!");
         }
-        return String.valueOf(employees.get(employees.indexOf(employee)));
-
+        if (employees.size() < SIZE) {
+            Employee employee = new Employee(StringUtils.capitalize(firstName.toLowerCase()),
+                    StringUtils.capitalize(lastName.toLowerCase()), salary, department);
+            employees.put(key, employee);
+            return employee;
+        }else throw new EmployeeStorageIsFullException("Коллекция заполнена, места нет!");
     }
 
-    public String removeEmployee(Employee employee) {
-        try {
-            checkRemoveEmployee(employee);
-        } catch (EmployeeNotFoundException e) {
-            return e.getMessage();
-        }
-        return String.valueOf(employees.get(employees.indexOf(employee)));
-
-    }
-
-    public String findEmployee(Employee employee) {
-        try {
-            checkFindEmployee(employee);
-        } catch (EmployeeNotFoundException e) {
-            return e.getMessage();
-        }
-        return String.valueOf(employees.get(employees.indexOf(employee)));
-    }
-
-    public String getEmployee() {
-        return employees.toString();
-    }
-
-    private void checkFindEmployee(Employee employee) {
-        if (!employees.contains(employee)) {
-            throw new EmployeeNotFoundException("Сотрудник не найден!");
-        } else employees.contains(employee);
-    }
-
-    private void checkAddEmployee(Employee employee) {
-        if (!employees.contains(employee)) {
-            throw new EmployeeNotFoundException("Сотрудник уже имеется в коллекции!");
-        } else employees.add(employee);
-    }
-
-    private void checkRemoveEmployee(Employee employee) {
-        if (!employees.contains(employee)) {
+    public Employee removeEmployee(String firstName, String lastName) {
+        String key = getKey(firstName, lastName);
+        if (!employees.containsKey(key)) {
             throw new EmployeeNotFoundException("Сотрудник отсутствует в коллекции!");
-        } else employees.remove(employee);
+        }
+        return employees.remove(key);
+    }
+
+    public Employee findEmployee(String firstName, String lastName) {
+        String key = getKey(firstName, lastName);
+        if (!employees.containsKey(key)) {
+            throw new EmployeeNotFoundException("Сотрудник отсутствует в коллекции!");
+        } else return employees.get(key);
+    }
+
+    public List<Employee> getAll() {
+        return new ArrayList<>(employees.values());
+
     }
 }
