@@ -32,8 +32,7 @@ public class EmployeeService {
                     StringUtils.capitalize(lastName.toLowerCase()), salary, department);
             employees.put(key, employee);
             return employee;
-        }
-        throw new EmployeeStorageIsFullException("Коллекция заполнена, места нет!");
+        }else throw new EmployeeStorageIsFullException("Коллекция заполнена, места нет!");
     }
 
     public Employee removeEmployee(String firstName, String lastName) {
@@ -53,5 +52,6 @@ public class EmployeeService {
 
     public List<Employee> getAll() {
         return new ArrayList<>(employees.values());
+
     }
 }

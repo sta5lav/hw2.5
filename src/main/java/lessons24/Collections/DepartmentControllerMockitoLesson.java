@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/department", method = RequestMethod.GET )
+@RequestMapping(value = "/department", method = RequestMethod.GET)
 public class DepartmentControllerMockitoLesson {
 
     private final DepartmentService departmentService;
@@ -34,8 +34,9 @@ public class DepartmentControllerMockitoLesson {
     public Employee findEmployeeMinSalary(@PathVariable int id) {
         return departmentService.getMinSalaryOfOtdel(id);
     }
+
     @GetMapping("/employees")
-    public Map<Integer, List<Employee>> allEmployees () {
+    public Map<Integer, List<Employee>> allEmployees() {
         return departmentService.employeePrintDepartment();
     }
 
